@@ -1,0 +1,32 @@
+# === Global ===
+.DS_Store
+*.log
+*.env
+*.env.local
+*.env.*.local
+node_modules/
+dist/
+build/
+
+# === Frontend (Vite) ===
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# === Backend (Spring Boot - Maven) ===
+backend/target/
+backend/.mvn/
+backend/mvnw
+backend/mvnw.cmd
+backend/*.iml
+backend/.classpath
+backend/.project
+backend/.settings/
+
+# === IDE Specific ===
+.idea/
+.vscode/
+*.iml
+
+# === OS Specific ===
+Thumbs.db
