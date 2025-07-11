@@ -21,7 +21,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponse add(CategoryRequest request) {
         CategoryEntity newCategory = convertToEntity(request);
         newCategory = categoryRepository.save(newCategory);
-        return convertToResponse(newCategory)
+        return convertToResponse(newCategory);
     }
 
     private CategoryResponse convertToResponse(CategoryEntity newCategory) {
