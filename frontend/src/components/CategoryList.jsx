@@ -10,7 +10,7 @@ const CategoryList = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredCategories = categories.filter((category) =>
-    category.name.toLowerCase().includes(searchTerm.toLowerCase())
+    category?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const deleteByCategoryId = async (categoryId) => {
@@ -46,9 +46,9 @@ const CategoryList = () => {
   };
 
   return (
-    <div>
+    <div className="max-h-[calc(100vh-180px)] ">
       {/* Search */}
-      <div className="flex items-center border border-white/80 rounded-xl">
+      <div className="flex items-center border border-white/80 rounded-xl ">
         <input
           type="text"
           name="keyword"
@@ -63,7 +63,7 @@ const CategoryList = () => {
         </span>
       </div>
       {/* List Categories */}
-      <div className="mt-6 flex flex-col gap-6">
+      <div className="mt-6 flex flex-col gap-6 overflow-y-scroll h-[500px]">
         {filteredCategories.map((category, index) => (
           <div
             key={index}
