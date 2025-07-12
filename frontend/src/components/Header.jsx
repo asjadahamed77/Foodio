@@ -21,8 +21,9 @@ const Header = () => {
       <div className="flex justify-between items-center box-border">
         {/* Logo */}
         <div className="text-center backdrop-blur-md rounded-4xl p-4 bg-white/5 cursor-pointer border border-white/10 shadow-sm transition-all duration-300 hover:bg-white/10">
-          <h1 className="text-3xl font-bold tracking-wider uppercase">Foodio</h1>
-       
+          <h1 className="text-3xl font-bold tracking-wider uppercase">
+            Foodio
+          </h1>
         </div>
 
         {/* Desktop NavLinks */}
@@ -64,7 +65,9 @@ const Header = () => {
         className={`fixed left-0 right-0 bottom-0 z-40 
         bg-white/5 backdrop-blur-md border border-white/10 
         shadow-md rounded-3xl p-6 text-center transition-transform duration-300 ease-linear 
-        ${showMobileLinks ? "translate-y-0 m-6" : "translate-y-full"} lg:hidden`}
+        ${
+          showMobileLinks ? "translate-y-0 m-6" : "translate-y-full"
+        } lg:hidden`}
       >
         {/* Close Icon */}
         <IoIosCloseCircle
