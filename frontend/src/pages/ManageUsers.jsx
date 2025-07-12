@@ -1,18 +1,20 @@
-import React from 'react'
+import React from "react";
+import UserForm from "../components/UserForm";
+import UserList from "../components/UserList";
 
 const ManageUsers = () => {
   return (
-    <div className='grid lg:grid-cols-[2fr_1fr] gap-[25px] px-4 sm:px-8 md:px-12 lg:px-16'> 
-    {/* Category Form  */}
-      <div className='backdrop-blur-md rounded-4xl p-4 bg-white/5 cursor-pointer border border-white/10 shadow-sm transition-all duration-300 hover:bg-white/10'>
-ww
+    <div className="grid lg:grid-cols-[2fr_1fr] gap-[25px] px-4 sm:px-8 md:px-12 lg:px-16">
+      {/* Category Form  */}
+      <div className="backdrop-blur-md rounded-4xl p-4 bg-white/5 cursor-pointer border border-white/10 shadow-sm transition-all duration-300 hover:bg-white/10">
+        <UserForm />
       </div>
       {/*  List of Categories */}
-      <div className='backdrop-blur-md rounded-4xl p-4 bg-white/5 cursor-pointer border border-white/10 shadow-sm transition-all duration-300 hover:bg-white/10'> 
-www
+      <div className="backdrop-blur-md rounded-4xl p-4 bg-white/5 cursor-pointer border border-white/10 shadow-sm transition-all duration-300 hover:bg-white/10">
+        <UserList />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ManageUsers
+export default ManageUsers;
