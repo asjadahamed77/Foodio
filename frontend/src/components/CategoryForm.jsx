@@ -3,7 +3,7 @@ import addImage from "../assets/icons/add-image.png";
 
 const CategoryForm = () => {
   return (
-    <div>
+    <div className="overflow-x-hidden overflow-y-scroll">
       <form className="flex flex-col gap-4">
         <div>
           <label htmlFor="image">

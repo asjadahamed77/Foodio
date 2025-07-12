@@ -11,9 +11,10 @@ function App() {
 
 
   return (
-    <div>
+    <div className="h-screen">
     <BrowserRouter>
     <Header />
+    <div className="h-[calc(100vh-120px)] overflow-y-scroll overflow-x-hidden">
     <Routes>
     <Route path="/"  element= {<Home/>} />
     <Route path="/explore" element={<Explore />} />
@@ -22,6 +23,7 @@ function App() {
     <Route path="/manage-users" element={<ManageUsers />} />
     <Route path="*" element={<h1>404 Not Found</h1>} />
     </Routes>
+    </div>
     </BrowserRouter>
 
 
