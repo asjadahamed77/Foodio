@@ -1,9 +1,36 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import { MdDelete } from "react-icons/md";
+import { FiSearch } from "react-icons/fi";
+import { deleteCategory } from "../service/categoryService";
+import toast from "react-hot-toast";
 
 const CategoryList = () => {
-  const { categories } = useContext(AppContext);
+  const { categories, setCategories } = useContext(AppContext);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredCategories = categories.filter((category) =>
+    category.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const deleteByCategoryId = async (categoryId) => {
+    try {
+      const response = await deleteCategory(categoryId);
+      if (response.status == 204) {
+        setCategories((prevCategories) =>
+          prevCategories.filter(
+            (category) => category.categoryId !== categoryId
+          )
+        );
+        toast.success("Category deleted successfully!");
+      }else{
+        toast.error("Failed to delete category. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error deleting category:", error);
+      toast.error("Failed to delete category. Please try again.");
+    }
+  };
 
   // Check if a hex color is dark
   const isColorDark = (hex) => {
@@ -15,16 +42,29 @@ const CategoryList = () => {
 
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 
-    return luminance < 0.5; // dark if less than 0.5
+    return luminance < 0.5;
   };
 
   return (
     <div>
       {/* Search */}
-      <div>Seacrh Bar</div>
+      <div className="flex items-center border border-white/80 rounded-xl">
+        <input
+          type="text"
+          name="keyword"
+          id="keyword"
+          placeholder="Search categories"
+          className=" w-full p-2   rounded-xl focus:ring-2 focus:ring-white/70 focus:outline-0 placeholder:text-white backdrop-blur-[400px] "
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <span className="p-2">
+          <FiSearch className="text-2xl text-white cursor-pointer hover:text-gray-300" />
+        </span>
+      </div>
       {/* List Categories */}
       <div className="mt-6 flex flex-col gap-6">
-        {categories.map((category, index) => (
+        {filteredCategories.map((category, index) => (
           <div
             key={index}
             className={` rounded-xl p-2 sm:p-4  border border-white/20 flex justify-between items-center gap-4 sm:gap-6 hover:opacity-85 duration-300 transition-opacity `}
@@ -51,6 +91,7 @@ const CategoryList = () => {
             </div>
 
             <p
+              onClick={() => deleteByCategoryId(category.categoryId)}
               className="bg-white rounded-lg p-2 border "
               style={{
                 borderColor: isColorDark(category.bgColor)

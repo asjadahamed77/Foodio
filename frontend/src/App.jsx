@@ -5,6 +5,7 @@ import Explore from "./pages/Explore";
 import ManageCategory from "./pages/ManageCategory";
 import ManageItems from "./pages/ManageItems";
 import ManageUsers from "./pages/ManageUsers";
+import  { Toaster } from 'react-hot-toast';
 
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
   return (
     <div className="h-screen">
     <BrowserRouter>
+    <Toaster position="top-center" reverseOrder={false} />
     <Header />
     <div className="h-[calc(100vh-120px)] overflow-y-scroll overflow-x-hidden">
     <Routes>
