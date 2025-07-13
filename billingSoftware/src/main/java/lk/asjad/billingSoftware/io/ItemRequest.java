@@ -5,19 +5,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.math.BigDecimal;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 
-public class UserResponse {
 
-    private  String userId;
+public class ItemRequest {
+
+
     private String name;
-    private String email;
-    private String role;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
+    private String description;
+    private BigDecimal price;
+    private String categoryId;
 }
