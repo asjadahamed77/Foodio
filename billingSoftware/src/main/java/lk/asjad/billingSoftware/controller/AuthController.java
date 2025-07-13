@@ -2,7 +2,9 @@ package lk.asjad.billingSoftware.controller;
 
 import lk.asjad.billingSoftware.io.AuthRequest;
 import lk.asjad.billingSoftware.io.AuthResponse;
+import lk.asjad.billingSoftware.service.UserService;
 import lk.asjad.billingSoftware.service.impl.AppUserDetailsService;
+import lk.asjad.billingSoftware.utills.JwtUtills;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,13 +29,19 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final AppUserDetailsService appUserDetailsService;
-
+    private final JwtUtills jwtUtills;
+    private final UserService userService;
 
     @PostMapping("/login")
     public AuthResponse login(@RequestBody AuthRequest request) throws Exception{
     authenticate(request.getEmail(), request.getPassword());
 
-    final UserDetails userDetails =appUserDetailsService.loadUserByUserName(request.getEmail());
+    final UserDetails userDetails =appUserDetailsService.loadUserByUsername(request.getEmail());
+    final String jwtToken = jwtUtills.generateToken(userDetails);
+
+    String role = userService.getUserRole(request.getEmail());
+
+    return new AuthResponse(request.getEmail(),jwtToken, role);
 
     }
 
