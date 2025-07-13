@@ -4,6 +4,7 @@ import lk.asjad.billingSoftware.entity.CategoryEntity;
 import lk.asjad.billingSoftware.io.CategoryRequest;
 import lk.asjad.billingSoftware.io.CategoryResponse;
 import lk.asjad.billingSoftware.repository.CategoryRepository;
+import lk.asjad.billingSoftware.repository.ItemRepository;
 import lk.asjad.billingSoftware.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final FileUploadService fileUploadService;
+    private ItemRepository itemRepository;
 
     @Override
     public CategoryResponse add(CategoryRequest request, MultipartFile file) {
@@ -42,11 +44,12 @@ public class CategoryServiceImpl implements CategoryService {
     public void delete(String categoryId) {
          CategoryEntity existingCategory = categoryRepository.findByCategoryId(categoryId)
                  .orElseThrow(() -> new RuntimeException("Category not found"+ categoryId) );
-         fileUploadService.deleteFIle(existingCategory.getImageUrl());
+         fileUploadService.deleteFile(existingCategory.getImageUrl());
 categoryRepository.delete(existingCategory);
     }
 
     private CategoryResponse convertToResponse(CategoryEntity newCategory) {
+        Integer itemsCount = itemRepository.countByCategoryId(newCategory.getId());
         return CategoryResponse.builder()
                 .categoryId(newCategory.getCategoryId())
                 .name(newCategory.getName())
@@ -55,6 +58,7 @@ categoryRepository.delete(existingCategory);
                 .imageUrl(newCategory.getImageUrl())
                 .description(newCategory.getDescription())
                 .bgColor(newCategory.getBgColor())
+                .items(itemsCount)
                 .build();
     }
 

@@ -37,14 +37,19 @@ public class ItemController {
         return itemService.fetchItems();
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/admin/items/{itemId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeItem(@PathVariable String itemId) {
-        try{
+        try {
             itemService.deleteItem(itemId);
-        }catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (ResponseStatusException e) {
+
+            throw e;
+        } catch (Exception e) {
+            // Catch truly unexpected errors
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
         }
     }
+
 
 }

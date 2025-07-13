@@ -1,4 +1,4 @@
-package lk.asjad.billingSoftware.config; // You can put it in a 'config' package
+package lk.asjad.billingSoftware.config;
 
 import lk.asjad.billingSoftware.filter.JwtRequestFilter;
 import lk.asjad.billingSoftware.service.impl.AppUserDetailsService;
@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -17,6 +17,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -29,37 +35,50 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for API endpoints (common for JWT)
-                .authorizeHttpRequests(authorize -> authorize
-                        // Permit access to the /login and /encode endpoints without authentication
-                        .requestMatchers("/login", "/encode").permitAll()
-                        // All other requests require authentication
+                .cors(Customizer.withDefaults()) // Apply CORS configuration
+                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for stateless API
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login","/encode").permitAll()
+                        .requestMatchers("/categories", "/items").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
+
                 )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Use stateless sessions for JWT
-                )
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // Add your JWT filter
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    // Optional: Register a CORS filter bean only if you're not using Spring Security's built-in CORS handling
+    @Bean
+    public CorsFilter corsFilter() {
+        return new CorsFilter(corsConfigurationSource());
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:5173")); // frontend origin
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        config.setAllowCredentials(true); // enable credentials like cookies
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(appUserDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Ensure this matches what you used to encode passwords
+        return new ProviderManager(authProvider);
     }
 }

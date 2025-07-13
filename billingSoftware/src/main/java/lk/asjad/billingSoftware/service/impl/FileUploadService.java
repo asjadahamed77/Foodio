@@ -4,5 +4,5 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FileUploadService {
     String uploadFile(MultipartFile file);
-    boolean deleteFIle(String imgUrl);
+    boolean deleteFile(String imgUrl);
 }

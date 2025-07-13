@@ -37,7 +37,7 @@ throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage()
 
     }
 
-    @GetMapping
+    @GetMapping("/categories")
     public List<CategoryResponse> fetchCategories() {
     return categoryService.read();
     }

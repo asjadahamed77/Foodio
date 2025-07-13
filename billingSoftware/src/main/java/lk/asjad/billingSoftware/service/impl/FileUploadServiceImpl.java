@@ -15,40 +15,62 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     private final Cloudinary cloudinary;
 
+    // ✅ Upload file to Cloudinary and return the secure URL
     @Override
     public String uploadFile(MultipartFile file) {
         try {
-            Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-            return uploadResult.get("secure_url").toString(); // return the uploaded file's URL
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                    "folder", "ajji_store/items" // optional: folder to organize images
+            ));
+            return uploadResult.get("secure_url").toString();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to upload file to Cloudinary", e);
+            e.printStackTrace();
+            throw new RuntimeException("Failed to upload image", e);
         }
     }
 
+    // ✅ Delete file from Cloudinary using public_id extracted from URL
     @Override
-    public boolean deleteFIle(String imgUrl) {
+    public boolean deleteFile(String imgUrl) {
         try {
-            // Extract public_id from image URL
-            String publicId = getPublicIdFromUrl(imgUrl);
-            if (publicId == null) return false;
+            String publicId = extractPublicId(imgUrl);
+            if (publicId == null) {
+                System.err.println("Invalid image URL: " + imgUrl);
+                return false;
+            }
 
-            Map<?, ?> result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            Map result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            System.out.println("Cloudinary delete result: " + result);
             return "ok".equals(result.get("result"));
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to delete file from Cloudinary", e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    // Helper method to extract the public_id from the Cloudinary image URL
-    private String getPublicIdFromUrl(String imageUrl) {
-        if (imageUrl == null || imageUrl.isEmpty()) return null;
+    // ✅ Extract public_id from secure URL
+    private String extractPublicId(String imageUrl) {
+        if (imageUrl == null || !imageUrl.contains("/upload/")) return null;
 
         try {
-            // example URL: https://res.cloudinary.com/demo/image/upload/v1623456789/folder_name/abc123.jpg
-            String[] parts = imageUrl.split("/");
-            String filenameWithExtension = parts[parts.length - 1]; // e.g. abc123.jpg
-            return imageUrl.substring(imageUrl.indexOf("/upload/") + 8).replaceAll("\\.[^.]*$", ""); // remove extension
+            // Split after "/upload/"
+            String[] parts = imageUrl.split("/upload/");
+            if (parts.length < 2) return null;
+
+            String afterUpload = parts[1]; // e.g., v123456/ajji_store/items/abc123.jpg
+            String[] tokens = afterUpload.split("/");
+
+            StringBuilder publicIdBuilder = new StringBuilder();
+            for (int i = 1; i < tokens.length; i++) {
+                publicIdBuilder.append(tokens[i]);
+                if (i < tokens.length - 1) publicIdBuilder.append("/");
+            }
+
+            // Remove file extension
+            String publicIdWithExt = publicIdBuilder.toString();
+            return publicIdWithExt.replaceFirst("\\.[^.]+$", "");
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }

@@ -73,14 +73,16 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void deleteItem(String itemId) {
-    ItemEntity existingItem = itemRepository.findByItemId(itemId)
-            .orElseThrow(() -> new RuntimeException("Item not found"+itemId));
-    boolean isFileDelete = fileUploadService.deleteFIle(existingItem.getImgUrl());
-    if (isFileDelete) {
-        itemRepository.delete(existingItem);
-    }else{
-        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete file");
+        ItemEntity existingItem = itemRepository.findByItemId(itemId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found: " + itemId));
+
+        boolean isFileDeleted = fileUploadService.deleteFile(existingItem.getImgUrl());
+
+        if (isFileDeleted) {
+            itemRepository.delete(existingItem);
+        } else {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete file");
+        }
     }
 
-    }
 }

@@ -12,6 +12,6 @@ public interface ItemService {
 
     List<ItemResponse> fetchItems();
 
-    void deleteItem(String itemId);
+    public void deleteItem(String itemId);
 
 }
