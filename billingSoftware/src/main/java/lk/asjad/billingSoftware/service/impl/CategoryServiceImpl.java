@@ -21,7 +21,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final FileUploadService fileUploadService;
-    private ItemRepository itemRepository;
+    private final ItemRepository itemRepository;
 
     @Override
     public CategoryResponse add(CategoryRequest request, MultipartFile file) {

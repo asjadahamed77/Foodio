@@ -1,6 +1,5 @@
 package lk.asjad.billingSoftware.controller;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.asjad.billingSoftware.io.CategoryRequest;
@@ -15,41 +14,42 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-
 @RequiredArgsConstructor
-
-
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final ObjectMapper objectMapper = new ObjectMapper(); // ✅ Use a single instance
 
-@PostMapping("/admin/categories")
-@ResponseStatus(HttpStatus.CREATED )
-    public CategoryResponse addCategory(@RequestPart("category")  String categoryString, @RequestPart("file") MultipartFile file) {
-    ObjectMapper objectMapper = new ObjectMapper();
-    CategoryRequest request = null;
-    try{
-        request = objectMapper.readValue(categoryString, CategoryRequest.class);
-        return categoryService.add(request, file);
-    }catch(JsonProcessingException exception){
-throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
-    }
-
+    @PostMapping("/admin/categories")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CategoryResponse addCategory(
+            @RequestPart("category") String categoryString,
+            @RequestPart("file") MultipartFile file
+    ) {
+        try {
+            CategoryRequest request = objectMapper.readValue(categoryString, CategoryRequest.class);
+            return categoryService.add(request, file);
+        } catch (JsonProcessingException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid category JSON: " + e.getOriginalMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to add category");
+        }
     }
 
     @GetMapping("/categories")
     public List<CategoryResponse> fetchCategories() {
-    return categoryService.read();
+        return categoryService.read();
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/admin/categories/{categoryId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable String categoryId) {
-try{
-categoryService.delete(categoryId);
-}catch(Exception e){
-throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage()) ;
-}
+        try {
+            categoryService.delete(categoryId);
+        } catch (ResponseStatusException e) {
+            throw e; // ✅ Keep existing status (e.g., 404 or 500)
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete category: " + e.getMessage());
+        }
     }
-
 }
