@@ -1,10 +1,12 @@
 import { createContext, useEffect, useState } from "react";
 import { fetchCategories } from "../service/categoryService";
+import { fetchItems } from "../service/itemService";
 
 export const AppContext = createContext(null);
 
 export const AppContextProvider = (props) => {
   const [categories, setCategories] = useState([]);
+  const [itemsData, setItemsData] = useState([]);
 
   const [auth, SetAuth] = useState({
     token: null,
@@ -16,6 +18,10 @@ export const AppContextProvider = (props) => {
       try {
         const response = await fetchCategories();
         setCategories(response.data);
+        const itemResponse = await fetchItems();
+        setItemsData(itemResponse.data);
+
+
       } catch (err) {
         console.error("Unauthorized or error fetching categories", err);
       }
@@ -38,7 +44,9 @@ export const AppContextProvider = (props) => {
     categories,
     setCategories,
     auth,
-    setAuthData
+    setAuthData,
+    itemsData,
+    setItemsData
   };
   return (
     <AppContext.Provider value={contextValue}>

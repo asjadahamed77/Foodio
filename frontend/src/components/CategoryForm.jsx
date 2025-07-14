@@ -39,7 +39,7 @@ const CategoryForm = () => {
     if (response.status === 201) {
       setCategories([...categories,response.data])
       toast.success("Category created successfully!");
-      setLoading(false);
+     
       setData({
         "name": "",
         "description": "",
