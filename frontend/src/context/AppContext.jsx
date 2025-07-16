@@ -66,7 +66,9 @@ export const AppContextProvider = (props) => {
     auth,
     setAuthData,
     itemsData,
-    setItemsData
+    setItemsData,
+    addToCart,
+    cartItems
   };
   return (
     <AppContext.Provider value={contextValue}>
