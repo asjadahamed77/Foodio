@@ -40,12 +40,17 @@ const Explore = () => {
           />
         </div>
         {/*  Cart Items */}
-        <div className="p-2 sm:p-4 bg-white/15 rounded-2xl border border-white/20 h-[47%] overflow-y-scroll">
+        <div className="p-2 sm:p-4 bg-white/15 rounded-2xl border border-white/20 h-[50%] overflow-y-scroll">
           <CartItems />
         </div>
         {/*  Cart Summary */}
-        <div className="p-2 sm:p-4 bg-white/15 rounded-2xl border border-white/20 h-[30%] overflow-y-scroll">
-          <CartSummary />
+        <div className="p-2 sm:p-4 bg-white/15 rounded-2xl border border-white/20 h-[27%] overflow-y-scroll">
+          <CartSummary 
+             customerName={customerName}
+             setCustomerName={setCustomerName}
+             mobileNumber={mobileNumber}
+             setMobileNumber={setMobileNumber} 
+          />
         </div>
       </div>
     </div>
