@@ -9,30 +9,47 @@ export const AppContextProvider = (props) => {
   const [itemsData, setItemsData] = useState([]);
   const [cartItems, setCartItems] = useState([]);
 
-  const addToCart = (item)=> {
-    const existingItem = cartItems.find(cartItem => cartItem.name === item.name);
-    if(existingItem){
-      setCartItems(cartItems.map(cartItem => cartItem.name === item.name ? {...cartItem, quantity: cartItem.quantity + 1} : cartItem));
+  const addToCart = (item) => {
+    const existingItem = cartItems.find(
+      (cartItem) => cartItem.name === item.name
+    );
+    if (existingItem) {
+      setCartItems(
+        cartItems.map((cartItem) =>
+          cartItem.name === item.name
+            ? { ...cartItem, quantity: cartItem.quantity + 1 }
+            : cartItem
+        )
+      );
+    } else {
+      setCartItems([...cartItems, { ...item, quantity: 1 }]);
     }
-    else{
-      setCartItems([...cartItems, {...item, quantity: 1}]); 
-    }
+  };
 
-  }
+  const removeFromCart = (itemId) => {
+    setCartItems(cartItems.filter((item) => item.itemId !== itemId));
+  };
+
+  const updateQuanity = (itemId, newQuantity) => {
+    setCartItems(
+      cartItems.map((item) =>
+        item.itemId === itemId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  };
 
   const [auth, SetAuth] = useState({
     token: null,
-    role: null
-  })
+    role: null,
+  });
 
   useEffect(() => {
     const loadData = async () => {
       try {
-
-        if( localStorage.getItem("token") && localStorage.getItem("role") ) {
+        if (localStorage.getItem("token") && localStorage.getItem("role")) {
           SetAuth({
             token: localStorage.getItem("token"),
-            role: localStorage.getItem("role")
+            role: localStorage.getItem("role"),
           });
         }
 
@@ -40,25 +57,22 @@ export const AppContextProvider = (props) => {
         setCategories(response.data);
         const itemResponse = await fetchItems();
         setItemsData(itemResponse.data);
-
-
       } catch (err) {
         console.error("Unauthorized or error fetching categories", err);
       }
     };
-  
+
     if (auth.token || localStorage.getItem("token")) {
       loadData();
     }
   }, [auth.token]);
-  
 
   const setAuthData = (token, role) => {
     SetAuth({
       token,
-      role
+      role,
     });
-  }
+  };
 
   const contextValue = {
     categories,
@@ -68,7 +82,9 @@ export const AppContextProvider = (props) => {
     itemsData,
     setItemsData,
     addToCart,
-    cartItems
+    cartItems,
+    removeFromCart,
+    updateQuanity,
   };
   return (
     <AppContext.Provider value={contextValue}>
