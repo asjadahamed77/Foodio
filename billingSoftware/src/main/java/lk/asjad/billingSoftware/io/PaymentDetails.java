@@ -16,6 +16,7 @@ public class PaymentDetails {
     private String razorpayOrderId;
     private String razorpayPaymentId;
     private String razorpaySignature;
+    private PaymentStatus status;
 
   
 

@@ -23,6 +23,7 @@ public class OrderRequest {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
 
     public static class OrderItemRequest{
         private String itemId;  
