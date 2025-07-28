@@ -7,7 +7,10 @@ import java.util.UUID;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -43,9 +46,13 @@ public class OrderEntity {
 
     @OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
     @JoinColumn(name = "order_id")
-    private List<OrderItemEntity> items = ArrayList<>();
+    private List<OrderItemEntity> items = new ArrayList<>();
 
+    @Embedded
     private PaymentDetails paymentDetails;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
 
     @PrePersist
     protected void onCreate() {
