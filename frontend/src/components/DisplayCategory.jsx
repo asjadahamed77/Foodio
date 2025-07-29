@@ -13,7 +13,7 @@ const DisplayCategory = ({categories, selectedCategory, setSelectedCategory}) =>
               numberOfItems = {category.items}
               bgColor = {category.bgColor}
               isSelected = {selectedCategory === category.categoryId}
-              onClick = {() => setSelectedCategory(category.categoryId)}
+              onClick = {() => setSelectedCategory(category.categoryId)}  
             />
           </div>
         )) 

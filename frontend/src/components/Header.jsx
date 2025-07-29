@@ -34,7 +34,7 @@ const Header = () => {
   const isAdmin = auth?.role === "ROLE_ADMIN";
 
   const filteredNavLinks = NavLinks.filter((link) => {
-    if (!isAdmin && ["Manage Items", "Manage Users", "Order History","Manage Categories"].includes(link.name)) {
+    if (!isAdmin && ["Manage Items", "Manage Users","Manage Categories"].includes(link.name)) {
       return false;
     }
     return true;
