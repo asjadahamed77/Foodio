@@ -7,6 +7,7 @@ import ManageItems from "./pages/ManageItems";
 import ManageUsers from "./pages/ManageUsers";
 import  { Toaster } from 'react-hot-toast';
 import Login from "./pages/Login";
+import OrderHistory from "./pages/OrderHistory";
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
     <Route path="/manage-categories" element={<ManageCategory />} />
     <Route path="/manage-items" element={<ManageItems />} />
     <Route path="/manage-users" element={<ManageUsers />} />
+    <Route path="/order-history" element={<OrderHistory />} />
     <Route path="/login" element={<Login />} />
     <Route path="*" element={<h1>404 Not Found</h1>} />
     </Routes>

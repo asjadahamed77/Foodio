@@ -77,6 +77,7 @@ const CartSummary = ({
         toast.success("Cash order placed successfully");
         setOrderDetails({ ...savedData, items: cartItems });
         setShowPopup(true); 
+        clearAll();
       } else if (response.status === 201 && paymentMode === "razorpay") {
         const razorpayLoaded = await loadRazorpayScript();
         if (!razorpayLoaded) {
@@ -166,12 +167,12 @@ const CartSummary = ({
   };
 
   const placeOrder = () => {
-    if (!orderDetails) {
+   
       toast.error("Please complete payment before placing the order.");
       return;
-    }
+  
   ;
-    clearAll();
+    
   };
 
  

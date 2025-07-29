@@ -11,6 +11,7 @@ const NavLinks = [
   { name: "Manage Items", link: "/manage-items" },
   { name: "Manage Categories", link: "/manage-categories" },
   { name: "Manage Users", link: "/manage-users" },
+  { name: "Order History", link: "/order-history" },
 ];
 
 const Header = () => {
