@@ -64,7 +64,7 @@ const OrderHistory = () => {
     {
       orders.map(order=>(
         <tr key={order.orderId} className="hover:bg-white/50 hover:text-black" > 
-          <td className="py-2 px-4">{order.orderId}</td>
+          <td className="py-2 px-4">{order.orderId.substring(0,16)}</td>
           <td className="py-2 px-4">{order.customerName} <br /><small>{order.phoneNumber}</small></td>
           <td className="py-2 px-4">{formatItems(order.items)}</td>
           <td className="py-2 px-4">{(order.totalAmount).toFixed(2)}</td>
