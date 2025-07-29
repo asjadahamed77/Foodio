@@ -2,17 +2,17 @@ package lk.asjad.billingSoftware.service.impl;
 
 import lk.asjad.billingSoftware.entity.OrderEntity;
 import lk.asjad.billingSoftware.entity.OrderItemEntity;
-import lk.asjad.billingSoftware.io.OrderRequest;
-import lk.asjad.billingSoftware.io.OrderResponse;
-import lk.asjad.billingSoftware.io.PaymentDetails;
-import lk.asjad.billingSoftware.io.PaymentMethod;
+import lk.asjad.billingSoftware.io.*;
 import lk.asjad.billingSoftware.repository.OrderEntityRepository;
 import org.hibernate.query.Order;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import lk.asjad.billingSoftware.service.OrderService;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderResponse convertToResponse(OrderEntity newOrder) {
         return  OrderResponse.builder()
                 .orderId(newOrder.getOrderId())
-                .customerName(newOrder.getPhoneNumber())
+                .customerName(newOrder.getCustomerName())
                 .phoneNumber(newOrder.getPhoneNumber())
                 .totalAmount(newOrder.getTotalAmount())
                 .paymentMethod(newOrder.getPaymentMethod())
@@ -91,5 +91,53 @@ public class OrderServiceImpl implements OrderService {
                 .stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public OrderResponse verifyPayment(PaymentVerificationRequest request) {
+       OrderEntity existingOrder =  orderEntityRepository.findByOrderId(request.getOrderId())
+                .orElseThrow(()-> new RuntimeException("Order not found"));
+
+       if(!verifyRazorpaySignature(request.getRazorpayOrderId(),request.getRazorpayPaymentId(),request.getRazorpaySignature())){
+           throw new RuntimeException("Invalid Razorpay Order ID");
+       }
+
+       PaymentDetails paymentDetails = existingOrder.getPaymentDetails();
+
+       paymentDetails.setRazorpayOrderId(request.getRazorpayOrderId());
+       paymentDetails.setRazorpayPaymentId(request.getRazorpayPaymentId());
+       paymentDetails.setRazorpaySignature(request.getRazorpaySignature());
+       paymentDetails.setStatus(PaymentDetails.PaymentStatus.COMPLETED);
+
+       existingOrder = orderEntityRepository.save(existingOrder);
+       return convertToResponse(existingOrder);
+
+
+
+
+    }
+
+    @Override
+    public Double sumSalesByDate(LocalDate date) {
+        return orderEntityRepository.sumSalesByDate(date) ;
+    }
+
+    @Override
+    public Long countByOrderDate(LocalDate date) {
+        return orderEntityRepository.countSalesByDate(date);
+    }
+
+
+    @Override
+    public List<OrderResponse> findRecentOrders() {
+        return orderEntityRepository.findRecentOrders(PageRequest.of(0,5))
+                .stream()
+                .map(orderEntity -> convertToResponse(orderEntity))
+                .collect(Collectors.toList());
+
+    }
+
+    private boolean verifyRazorpaySignature(String razorpayOrderId, String razorpayPaymentId, String razorpaySignature) {
+        return true;
     }
 }

@@ -23,7 +23,8 @@ public class OrderItemEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique=true)
+    @Column(name = "order_id")
+    private Long orderId;
     private String itemId;
     private String name;
     private Double price;
